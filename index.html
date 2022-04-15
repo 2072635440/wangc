@@ -1,0 +1,113 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>ArcGIS API for JavaScript Hello World App</title>
+    <style>
+        html, body, #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+        .esri-edieor.esri-item-list_scroller{max-height: 350px;}
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css" >
+    <script src="https://js.arcgis.com/4.19/"></script>
+
+    <script>
+       require([
+    "esri/WebMap",
+    "esri/views/MapView",
+    "esri/widgets/Editor", "esri/widgets/Locate",   "esri/widgets/ScaleBar",
+    "esri/widgets/Home",
+    "esri/widgets/Compass", 
+    "esri/widgets/CoordinateConversion","esri/widgets/Search"
+], function (WebMap, MapView, Editor,Locate, ScaleBar, Home, Compass, CoordinateConversion,Search ) {
+
+    let webmap = new WebMap({
+        //portalItem:{id:"5a9944441570441d9626064dd8081fba"}
+        portalItem:{id:"8528a50deece4afda901d6da8c10d79e"}
+    });
+
+    let view = new MapView({
+       
+        container: "viewDiv",
+        map: webmap
+        
+    });
+    view.when(function(){
+        view.popup.autoOpenEnabled = false;
+        let editor=new Editor({
+            view:view
+        });
+        view.ui.add(editor,"top-right");
+    });
+    const locate = new Locate({
+  view: view,
+  useHeadingEnabled: false,
+  goToOverride: function(view, options) {
+    options.target.scale = 1500;
+    return view.goTo(options.target);
+  }
+});
+view.ui.add(locate, "top-left");
+var ccWidget = new CoordinateConversion({
+    view: view
+})
+//显示比例尺
+ShowScaleBar();
+
+//显示比例尺函数
+function ShowScaleBar() {
+    var scaleBar = new ScaleBar({
+        style: "ruler",
+        view: view,
+        unit: "dual"
+    });
+    view.ui.add(scaleBar, {
+        position: "bottom-left"
+    })
+}
+//添加home
+Showhome();
+
+function Showhome() {
+    var homeBtn = new Home({
+        view: view,
+    });
+    view.ui.add(homeBtn, {
+        position: "top-left"
+    });
+}
+//指南针
+ShowCompass();
+
+function ShowCompass() {
+
+
+    var compassWidget = new Compass({
+        view: view
+    });
+
+    // Add the Compass widget to the top left corner of the view
+    view.ui.add(compassWidget, "top-left");
+};
+
+view.ui.add(ccWidget, "bottom-left")
+//图
+var searchWidget = new Search({
+    view: view
+});
+// Add the search widget to the top right corner of the view
+//view.ui.add(searchWidget, { position: "top-right"});
+
+});
+    </script>
+</head>
+<body>
+    <div id="viewDiv"></div>
+    <div id="editorDiv"></div>
+</body>
+</html>
